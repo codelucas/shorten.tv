@@ -1,0 +1,22 @@
+
+.block {
+    margin-top: 10px;
+}
+
+.orange {
+    color: #df691a;
+}
+
+.url-input {
+    margin-top: 30px;
+}
+
+.col-centered {
+    float: none;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.footer-div {
+    margin-top:50px;
+}

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html class="no-js">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>shorten.tv, free & fast video summarization!</title>
+        <meta name="description" content="
+        Shorten.tv is the first ever video summarization tool. It is both
+        fast and free. This tool was built by Lucas Ou-Yang using python, flask, and ffmpeg. 
+        http://codelucas">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+        <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/style.css">
+    </head>
+    <body>
+        <!--[if lt IE 8]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+        <!--
+        <div class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header"></div>
+
+            </div>
+        </div>
+        -->
+        <div class="container">
+            <div class="page-header" id="banner">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <h1>Meet <span class="orange">shorten.tv</span></h1>
+                        <p class="lead">The world's first ever <u>video</u> summarization tool.</p>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <form target="." method="POST" class="form-horizontal">
+                            <div class="form-group url-input">
+                                <p>Enter the url of your favorite youtube video to get started.</p>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" name="videoURL" id="focusedInput" 
+                                        placeholder="http://www.youtube.com/watch?v=moSFlvxnbgk"/>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button">submit</button>
+                                    </span>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-centered">
+                <iframe width="900" height="550" frameborder="0" allowfullscreen
+                    src="http://www.youtube.com/embed/Nc9xq-TVyHI?start=110&end=119&autoplay=1">
+                </iframe>
+            </div>
+
+            <footer>
+                <div class="col-lg-12 col-centered footer-div" style="">
+                    <p>Built with love, by <a href="http://codelucas.com">Lucas</a>.
+                    <!--
+                    &nbsp;View the code behind this project and more of his work 
+                        <a href="https://github.com/codelucas/shorten.tv">here</a>.</p>
+                    -->
+                </div>
+            </footer>
+        </div>
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/shorten.js"></script>
+
+        <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+        <script>
+            (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+            function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+            e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+            e.src='//www.google-analytics.com/analytics.js';
+            r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+            ga('create','UA-XXXXX-X');ga('send','pageview');
+        </script>
+    </body>
+</html>

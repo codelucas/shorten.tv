@@ -1,22 +1,77 @@
-
 .block {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 
-.orange {
-    color: #df691a;
-}
-
-.url-input {
-    margin-top: 30px;
+.boxHeader {
+  font-size: 30px;
+  margin: 10px 0 20px 0;
 }
 
 .col-centered {
-    float: none;
-    margin: 0 auto;
-    text-align: center;
+  float: none;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.orange {
+  color: #df691a;
+}
+
+.url-input {
+  margin-top: 30px;
+}
+
+.searchBanner {
+  font-size: 18px;
 }
 
 .footer-div {
-    margin-top:50px;
+  margin-top:50px;
+}
+
+#linkUrl, #embedUrl {
+  width: 280px;
+  height: 30px;
+  color: #666;
+  font-size: 14px;
+  margin-right: 15px;
+  outline: none;
+  border: 1px solid #df691a;
+  padding: 1px;
+}
+
+.statusLoading {
+  background: #FFF url(/imgs/loading.gif) no-repeat 310px 50%;
+}
+
+.statusPlaying {
+  background: #FFF url(/imgs/playing.gif) no-repeat 310px 50%;
+}
+
+#searchBox {
+  width: 340px;
+  height: 40px;
+  font-size: 20px;
+  margin-right: 15px;
+  outline: none;
+  border: 2px solid #999;
+  padding: 0 5px 0 4px;
+}
+
+#searchBox:focus {
+  border: 2px solid #df691a;
+}
+
+#searchTermKeyword {
+  font-size: 16px;
+  color: #df691a;
+  font-weight: 700;
+}
+
+#searchBox {
+  color: #2b3e50;
+}
+
+input {
+  color: #2b3e50;
 }

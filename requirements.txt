@@ -3,3 +3,4 @@ Jinja2==2.7.1
 Werkzeug==0.9.4
 gunicorn==18.0
 requests==2.2.1
+gdata==2.0.18

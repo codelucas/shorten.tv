@@ -72,6 +72,18 @@
   color: #2b3e50;
 }
 
+#tipDiv {
+  font-size: 16px;
+  width: 750px;
+  padding: 10px;
+}
+
+#credit p, #credit ul, #tip {
+  font-size: 13px;
+  line-height: 1.8em;
+  margin-left: 3px;
+}
+
 input {
   color: #2b3e50;
 }

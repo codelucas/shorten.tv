@@ -60,8 +60,8 @@ class GeneralUnitTestCases(unittest.TestCase):
 
     @print_test
     def get_timestamps_test(self):
-        timestamps = youtube.get_timestamp_list(self.client, self.video_id)
-        print timestamps
+        #timestamps = youtube.get_timestamp_list(self.client, self.video_id)
+        #print timestamps
         duration_seconds = youtube.get_duration(self.client, self.video_id)
         assert self.DURATION == duration_seconds
 
@@ -76,8 +76,9 @@ class GeneralUnitTestCases(unittest.TestCase):
     @print_test
     def get_hotspot_test(self):
         HOTSPOTS = [(u'00:40', 1), (u'1:21', 1), (u'1:32', 3), (u'1:43', 4),
-                (u'1:51', 1), (u'2:22', 1), (u'02:48', 1)]
+                    (u'1:51', 1), (u'2:22', 1), (u'02:48', 1)]
         self.hotspots = algorithm.get_hotspots(self.sorted_times, self.DURATION)
+        #print self.hotspots
         assert self.hotspots == HOTSPOTS
 
     @print_test
@@ -90,7 +91,7 @@ class GeneralUnitTestCases(unittest.TestCase):
     @print_test
     def expand_hotspot_test(self):
         self.HOTCLIPS = [(37, 43), (78, 84), (89, 95), (100, 106), (108, 114),
-                (139, 145), (165, 171)]
+               (139, 145), (165, 171)]
         self.hotclips = algorithm.expand_hotspots(self.hotspots, self.DURATION)
         assert self.hotclips == self.HOTCLIPS
 

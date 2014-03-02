@@ -302,9 +302,10 @@ function playVideo() {
 
 function playHotClips(videoId) {
   if (ytplayer) {
-    ytplayer.cueVideoById(videoId);
+    // ytplayer.cueVideoById(videoId);
+    ytplayer.loadVideoById(videoId);
     var i = 0;                  
-    var hotClips = [[5, 10], [30, 35]];
+    var hotClips = [];
     var startTime = 0;
     var endTime = 0;
     var delta = 0;

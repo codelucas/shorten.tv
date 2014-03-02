@@ -6,6 +6,7 @@ __license__ = 'MIT'
 __copyright__ = 'Copyright 2014, Lucas Ou-Yang'
 
 import time
+import random
 
 def convert_to_timestamp(seconds):
     """
@@ -28,9 +29,17 @@ def convert_to_seconds(timestamp):
     minutes = 0
     seconds = 0
     tsplit = timestamp.split(':')
-    seconds = int(tsplit[1])
-    minutes = int(tsplit[0])
-    return (minutes * 60) + seconds
+    num_colon = timestamp.count(':')
+    if num_colon == 1:
+        seconds = int(tsplit[1])
+        minutes = int(tsplit[0])
+        return (minutes * 60) + seconds
+    elif num_colon == 2:
+        hours = int(tsplit[0])
+        minutes = int(tsplit[1])
+        seconds = int(tsplit[2])
+        return (hours * 3600) + (minutes * 60) + seconds
+    raise Exception('Funky shit happening w/ timestamps')
 
 def unique_timestamps(timestamps):
     """
@@ -61,12 +70,12 @@ def hotness_delta(video_duration):
     if not isinstance(video_duration, int):
         video_duration = int(video_duration)
     if video_duration < 10:
-        return 5
+        return 2
     elif video_duration < 120:
-        return 14
+        return 4
     elif video_duration < 300:
-        return 25
-    return 30
+        return 7
+    return 10
 
 def get_hotspots(timestamps, video_duration):
     """
@@ -107,6 +116,27 @@ def get_hotspots(timestamps, video_duration):
                                     if time not in killed ]
     return hotspots
 
+def random_shit(duration):
+    """
+    In rare but terrible scenarios, a youtube video will
+    have no timestamped comments, hence rendering this entire
+    web application useless. I won't let that happen, this
+    method generates radomized timestamps so the user can at least
+    feel like they are recieving good content.
+
+    It won't be completely random, I will follow a critera. Some
+    clips near the beginning, middle and end.
+    """
+    rands = set()
+    for i in xrange(5):
+        rands.add(random.randint(0, duration))
+
+    sorted_rands = sorted(list(rands))
+    faked_hotspots = [(convert_to_timestamp(s), 1) for s in sorted_rands]
+
+    hotspots = expand_hotspots(faked_hotspots, duration, 5)
+    return hotspots
+
 def expand_hotspots(hotspots, video_duration, max_subclips=10):
     """
     Inputs a list of hotspots, a list of two-tuples with a
@@ -128,10 +158,12 @@ def expand_hotspots(hotspots, video_duration, max_subclips=10):
     # expanding our timestmaps from both sides, so 2*delta will go overboard
     delta = hotness_delta(video_duration)/2
     expanded_spots = []
+    lower_bound = 0
     for time, hotness in hotspots:
         seconds = convert_to_seconds(time)
-        expanded_spots.append((max(0, seconds-delta),
+        expanded_spots.append((max(lower_bound, seconds-delta),
                                min(seconds+delta, int(video_duration)-1)))
+        lower_bound = min(seconds+delta, int(video_duration)-1)
     if len(expanded_spots) > max_subclips:
         pass  # TODO
     return expanded_spots

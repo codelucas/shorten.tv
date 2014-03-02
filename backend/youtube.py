@@ -93,6 +93,7 @@ def get_timestamp_list(client, video_id):
     """
     Returns a sorted list of all timestamps present in any comment
     of this selected youtube video.
+    TODO: Include the comment with the time for display in webapp.
     """
     vtime_regex = re.compile(u'[\d\s\w]{0,1}\d:\d\d')
     comments = get_yt_comments(client=client, video_id=video_id)
@@ -100,7 +101,7 @@ def get_timestamp_list(client, video_id):
     for comment in comments:
         cur_times = vtime_regex.findall(comment)
         clean_times = [trim_str_num(t) for t in cur_times]
-        times += clean_times # More pythonic than .extends(..)
+        times += clean_times  # More pythonic than .extends(..)
     return times
 
 def get_client():

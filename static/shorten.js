@@ -14,7 +14,7 @@ function _run() {
 }
 
 function loadPlayer() {
-  currentVideoId = "koJlIGDImiU";
+  currentVideoId = "TTpfMLV6STQ";
   var params = {
     allowScriptAccess: "always"
   };
@@ -69,17 +69,18 @@ function onPlayerStateChange(newState) {
     doneWorking();
     pendingDoneWorking = false;
   } else if (playerState === 0) {
+    //doneWorking();
     goNextVideo();
   }
 }
 
 function onKeyDown(e) {
   if (e.keyCode == 39 || e.keyCode == 40) {
-    goNextVideo();
+    //goNextVideo();
   } else if (e.keyCode == 37 || e.keyCode == 38) {
-    goPrevVideo();
+    //goPrevVideo();
   } else if (e.keyCode == 13) {
-    playPause();
+    //playPause();
   }
 }
 
@@ -246,7 +247,6 @@ function getHash() {
   return decodeURIComponent(window.location.hash.substring(1));
 }
 
-
 function loadRandomTip() {
   var tips = [ 
       "Don't touch the video player! It will disrupt the summarization.", 
@@ -256,7 +256,6 @@ function loadRandomTip() {
   var randomNumber = Math.floor(Math.random() * tips.length);
   $("#tip").html("<u>Quick tip</u>: " + tips[randomNumber]);
 }
-
 
 function loadVideo(videoId) {
   if (ytplayer) {
@@ -271,10 +270,16 @@ function playVideo() {
   }
 }
 
+function seekTo(startTime) {
+  if (ytplayer) {
+    ytplayer.seekTo(startTime);
+  }
+}
+
 function playHotClips(videoId) {
   if (ytplayer) {
     ytplayer.cueVideoById(videoId);
-    //ytplayer.loadVideoById(videoId);
+    // ytplayer.loadVideoById(videoId);
     var i = 0;                  
     var hotClips = [];
     var startTime = 0;
@@ -285,10 +290,11 @@ function playHotClips(videoId) {
       function(response) {
         var strHotClips = response.hotclips;
         var prettyHotClips = response.pretty_hotclips;
-        hotClips = jQuery.parseJSON(strHotClips);
 
+        hotClips = jQuery.parseJSON(strHotClips);
         prettyHotClips = jQuery.parseJSON(prettyHotClips);
         var hotclipString = "";
+
         for (var j=0; j<prettyHotClips.length; j++) {
           hotclipString = hotclipString + " (" + 
             prettyHotClips[j][0] + ", " + prettyHotClips[j][1] + ")";           
@@ -308,16 +314,24 @@ function playHotClips(videoId) {
         endTime = curTup[1];
         delta = (endTime - startTime) * 1000;
         delta += 3000; // youtube api lag time
-        // alert(startTime+" " + delta);
 
-        ytplayer.seekTo(startTime);
-        ytplayer.playVideo();
+        //alert('we are currently seeking to ' + startTime + ' clips: '+ hotClips);
+        seekTo(startTime);
+        playVideo();
         i++;                
-        if (i < hotClips.length) {      
+        if (i == hotClips.length - 1) { 
+          setTimeout(function() {
+            i = 0;
+            goNextVideo();
+          }, delta);
+
+        } else if (i < hotClips.length) {      
           sequence();      
-        } // ..  setTimeout()
+        }
         else {
-          replay();
+          // replay();
+          i = 0;
+          goNextVideo();
         }
        }, delta);
     }
@@ -340,10 +354,11 @@ function loadAndPlayVideo(videoId, playlistPos, bypassXhrWorkingCheck) {
   if (!bypassXhrWorkingCheck && xhrWorking) {
     return;
   }
+  $('#videoTitle').html('<span class="blackLight"> Generating video summary ...</span></div>');
+  $('#videoMetaData').html('');
+
   if (ytplayer) {
     xhrWorking = true;
-    // ytplayer.loadVideoById(videoId);
-    // ytplayer.cueVideoById(videoId);
     playHotClips(videoId);
     currentVideoId = videoId;
     pendingDoneWorking = true;

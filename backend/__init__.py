@@ -73,7 +73,7 @@ def shorten():
     hotclips_str = json.dumps(hotclips)
     return jsonify({'hotclips': hotclips_str,
                     'duration': algorithm.convert_to_timestamp(prev_duration),
-                    'pretty_hotclips': json.dumps(algorithm.all_to_timestamp(prev_clips))
+                    'pretty_hotclips': json.dumps(algorithm.all_to_timestamp(hotclips))
                     })
 
 app.debug = app.config['DEBUG']

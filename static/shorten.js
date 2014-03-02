@@ -39,7 +39,7 @@ function onYouTubePlayerReady(playerId) {
     var searchTerm = $('<div/>').text(getHash()).html(); // escape html
     $("#searchBox").val(searchTerm).focus();
   } else {
-    var defaultSearches = [ "Rihanna", "Nelly", "Usher", "Katy Perry", "Eminem", "Shakira", "Kesha", "B.o.B.", "Taylor Swift", "Akon", "Bon Jovi", "Michael Jackson", "Lady Gaga", "Paramore", "Jay Z", "Led Zepplin", "Guns N Roses", "Aerosmith", "Borat", "Basshunter", "Fallout Boy", "Blink 182", "Pink Floyd", "MGMT", "Justin Bieber", "The Killers", "Drake", "Jay Sean" ];
+    var defaultSearches = [ "Rihanna", "Usher", "Katy Perry", "Eminem", "Shakira", "Taylor Swift", "Akon", "Lady Gaga", "Paramore", "Jay Z", "Led Zepplin", "Guns N Roses", "Aerosmith", "Borat", "Fallout Boy", "Blink 182", "Justin Bieber", "Drake"];
     var randomNumber = Math.floor(Math.random() * defaultSearches.length);
     $("#searchBox").val(defaultSearches[randomNumber]).select().focus();
   }
@@ -60,6 +60,8 @@ function onBodyLoad() {
   pendingDoneWorking = false;
   playerState = -1;
   hashTimeout = false;
+  mainSequence = null;
+  flaskXhr = null;
   // loadRandomTip();
 }
 
@@ -69,7 +71,7 @@ function onPlayerStateChange(newState) {
     doneWorking();
     pendingDoneWorking = false;
   } else if (playerState === 0) {
-    //doneWorking();
+    // doneWorking();
     goNextVideo();
   }
 }
@@ -111,6 +113,10 @@ function goVid(playlistPos, playlistPage) {
 }
 
 function doInstantSearch() {
+  if (flaskXhr) {
+    flaskXhr.abort();
+    xhrWorking = false;
+  }
   if (xhrWorking) {
     pendingSearch = true;
     return;
@@ -119,6 +125,7 @@ function doInstantSearch() {
   if (searchBox.val() == currentSearch) {
     return;
   }
+
   currentSearch = searchBox.val();
   if (searchBox.val() === "") {
     $("#playlistWrapper").slideUp("slow");
@@ -130,6 +137,7 @@ function doInstantSearch() {
     updateSuggestedKeyword("Search YouTube Instantly");
     return;
   }
+
   searchBox.attr("class", "statusLoading");
   keyword = searchBox.val();
   var the_url = "http://suggestqueries.google.com/complete/search?hl=en&ds=yt&client=youtube&hjson=t&jsonp=window.yt.www.suggest.handleResponse&q=" + encodeURIComponent(searchBox.val()) + "&cp=1";
@@ -276,18 +284,48 @@ function seekTo(startTime) {
   }
 }
 
+function clearCurSequence() {
+  $('#videoTitle').html(
+    '<span class="blackLight"> Generating video summary ...</span></div>');
+  $('#videoMetaData').html('');
+
+  if (flaskXhr) {
+    flaskXhr.abort();
+    xhrWorking = false;
+  }
+  clearTimeout(mainSequence);
+  clearHighlights();
+}
+
+function highlightTime(index) {
+  clearHighlights();
+  $('span.timeclip'+index.toString()).css('color', '#df691a');
+  $('span.timeclip'+index.toString()).css('font-weight', '700');
+  $('span.timeclip'+index.toString()).css('font-size', '19px');
+}
+
+function clearHighlights() {
+  // clear all old bolds
+  $('span.timeclip').css('font-weight', '300');
+  $('span.timeclip').css('color', '#fff');
+  $('span.timeclip').css('font-size', '15px');
+}
+
 function playHotClips(videoId) {
   if (ytplayer) {
-    ytplayer.cueVideoById(videoId);
-    // ytplayer.loadVideoById(videoId);
+    // ytplayer.cueVideoById(videoId);
+    ytplayer.loadVideoById(videoId);
     var i = 0;                  
     var hotClips = [];
     var startTime = 0;
     var endTime = 0;
     var delta = 0;
 
-    $.post('/shorten/', { yt_id: videoId },
+    flaskXhr = $.post('/shorten/', { yt_id: videoId },
       function(response) {
+        if (!response) {
+          return;
+        }
         var strHotClips = response.hotclips;
         var prettyHotClips = response.pretty_hotclips;
 
@@ -296,11 +334,12 @@ function playHotClips(videoId) {
         var hotclipString = "";
 
         for (var j=0; j<prettyHotClips.length; j++) {
-          hotclipString = hotclipString + " (" + 
-            prettyHotClips[j][0] + ", " + prettyHotClips[j][1] + ")";           
+          hotclipString = hotclipString + " <span class='timeclip timeclip" + 
+            j.toString() + "'>(" + 
+            prettyHotClips[j][0] + ", " + prettyHotClips[j][1] + ")</span>";           
         }
 
-        //'Duration: <i>' + response.duration + '</i><br>
+        // 'Duration: <i>' + response.duration + '</i><br>
         $('#videoMetaData').html('Summarized Clips: <i>' + hotclipString+'</i>');
 
         var title = getCurTitle();
@@ -311,14 +350,20 @@ function playHotClips(videoId) {
     );
 
     function sequence() {        
-      setTimeout(function() { 
+      mainSequence = setTimeout(function() { 
+        if (i == hotClips.length) {
+          i = 0;  // failed
+          goNextVideo();
+          return;
+        }
+        highlightTime(i);
         var curTup = hotClips[i];
         startTime = curTup[0];
         endTime = curTup[1];
         delta = (endTime - startTime) * 1000;
         delta += 3000;  // youtube api lag time
 
-        //alert('we are currently seeking to ' + startTime + ' clips: '+ hotClips);
+        // alert('we are currently seeking to ' + startTime + ' clips: '+ hotClips);
         seekTo(startTime);
         playVideo();
         i++;                
@@ -327,25 +372,16 @@ function playHotClips(videoId) {
             i = 0;
             goNextVideo();
           }, delta);
-
         } else if (i < hotClips.length) {      
           sequence();      
-        }
-        else {
-          // replay();
-          i = 0;
-          goNextVideo();
         }
        }, delta);
     }
 
     function replay() {
-      // alert('replay');
       i = 0;
       sequence();
     }
-
-    //replay();
   }
 }
 
@@ -357,8 +393,8 @@ function loadAndPlayVideo(videoId, playlistPos, bypassXhrWorkingCheck) {
   if (!bypassXhrWorkingCheck && xhrWorking) {
     return;
   }
-  $('#videoTitle').html('<span class="blackLight"> Generating video summary ...</span></div>');
-  $('#videoMetaData').html('');
+
+  clearCurSequence();
 
   if (ytplayer) {
     xhrWorking = true;
@@ -366,6 +402,7 @@ function loadAndPlayVideo(videoId, playlistPos, bypassXhrWorkingCheck) {
     currentVideoId = videoId;
     pendingDoneWorking = true;
   }
+
   currentPlaylistPos = playlistPos;
   $("#playlistWrapper").removeClass("play0 play1 play2 play3 play4 pauseButton playButton").addClass("pauseButton play" + playlistPos);
   var playlist = $("#playlist");

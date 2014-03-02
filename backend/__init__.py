@@ -66,8 +66,8 @@ def shorten():
 
     hotclips, duration, timestamps = extract_yt_data(yt_id)
     duration = int(duration)
-    #if len(hotclips) < MIN_CLIPS:
-    #    hotclips = hotclips + algorithm.random_shit(duration)
+    if len(hotclips) < MIN_CLIPS:
+        hotclips = hotclips + algorithm.random_shit(duration)
     hotclips = algorithm.sort_seconds(hotclips)
 
     yt_dat = {'hotclips': hotclips, 'duration': duration}

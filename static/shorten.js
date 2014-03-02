@@ -299,10 +299,13 @@ function playHotClips(videoId) {
           hotclipString = hotclipString + " (" + 
             prettyHotClips[j][0] + ", " + prettyHotClips[j][1] + ")";           
         }
+
         //'Duration: <i>' + response.duration + '</i><br>
         $('#videoMetaData').html('Summarized Clips: <i>' + hotclipString+'</i>');
+
         var title = getCurTitle();
         $('#videoTitle').html('<strong>'+title+'</strong>');
+
         replay();
       }, 'json'
     );
@@ -313,13 +316,13 @@ function playHotClips(videoId) {
         startTime = curTup[0];
         endTime = curTup[1];
         delta = (endTime - startTime) * 1000;
-        delta += 3000; // youtube api lag time
+        delta += 3000;  // youtube api lag time
 
         //alert('we are currently seeking to ' + startTime + ' clips: '+ hotClips);
         seekTo(startTime);
         playVideo();
         i++;                
-        if (i == hotClips.length - 1) { 
+        if (i == hotClips.length) { 
           setTimeout(function() {
             i = 0;
             goNextVideo();

@@ -51,6 +51,8 @@ def shorten():
     prev_duration = prev_yt_dat.get('duration') or '0'
     prev_duration = int(prev_duration)
 
+    prev_clips = algorithm.sort_seconds(prev_clips)
+
     if len(prev_clips) >= MIN_CLIPS:
         hotclips_str = json.dumps(prev_clips)
         return jsonify({'hotclips': hotclips_str,
@@ -64,8 +66,9 @@ def shorten():
 
     hotclips, duration, timestamps = extract_yt_data(yt_id)
     duration = int(duration)
-    if len(hotclips) < MIN_CLIPS:
-        hotclips = hotclips + algorithm.random_shit(duration)
+    #if len(hotclips) < MIN_CLIPS:
+    #    hotclips = hotclips + algorithm.random_shit(duration)
+    hotclips = algorithm.sort_seconds(hotclips)
 
     yt_dat = {'hotclips': hotclips, 'duration': duration}
     redis.setex(yt_id, yt_dat, HOTCLIP_CACHE_TIME)

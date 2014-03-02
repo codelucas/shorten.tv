@@ -67,6 +67,12 @@ def sort_timestamps(timestamps):
     """
     return sorted(timestamps, key=lambda num: convert_to_seconds(num))
 
+def sort_seconds(timestamps):
+    """
+    Sorts a list of 2-tuples by their first element
+    """
+    return sorted(timestamps, key=lambda tup: tup[0])
+
 def hotness_delta(video_duration):
     """
     Hotness delta is the number of seconds apart where

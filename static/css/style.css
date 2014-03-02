@@ -72,6 +72,28 @@
   color: #2b3e50;
 }
 
+#shareButtons {
+  margin-bottom: 20px;
+  margin-left:30px;
+  margin-top: 15px;
+}
+
+.viralHeader {
+  font-size: 20px;
+  color: red;
+  font-weight: 700;
+}
+
+#videoTitle {
+  margin-top: -10px;
+  margin-bottom: 5px;
+  font-size: 18px;
+}
+
+#videoMetaData {
+  margin-bottom: 10px;
+}
+
 #tipDiv {
   font-size: 16px;
   width: 750px;

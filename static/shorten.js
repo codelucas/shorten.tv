@@ -35,16 +35,11 @@ function onYouTubePlayerReady(playerId) {
   $("#linkUrl").click(function(e) {
     $(this).select();
   });
-  /*
-  $("#embedUrl").click(function(e) {
-    $(this).select();
-  });
-  */
   if (window.location.hash) {
     var searchTerm = $('<div/>').text(getHash()).html(); // escape html
     $("#searchBox").val(searchTerm).focus();
   } else {
-    var defaultSearches = [ "YouTube", "AutoTune", "Rihanna", "Far East Movement", "Glee Cast", "Nelly", "Usher", "Katy Perry", "Taio Cruz", "Eminem", "Shakira", "Kesha", "B.o.B.", "Taylor Swift", "Akon", "Bon Jovi", "Michael Jackson", "Lady Gaga", "Paramore", "Jay Z", "My Chemical Romance", "The Beatles", "Led Zepplin", "Guns N Roses", "AC DC", "System of a Down", "Aerosmith", "Tetris", "8-bit", "Borat", "Basshunter", "Fallout Boy", "Blink 182", "Pink Floyd", "Still Alive", "Men at Work", "MGMT", "Justin Bieber", "The Killers", "Bed intruder song", "Baba O Riley", "Billy Joel", "Drake", "Jay Sean" ];
+    var defaultSearches = [ "Rihanna", "Nelly", "Usher", "Katy Perry", "Eminem", "Shakira", "Kesha", "B.o.B.", "Taylor Swift", "Akon", "Bon Jovi", "Michael Jackson", "Lady Gaga", "Paramore", "Jay Z", "Led Zepplin", "Guns N Roses", "Aerosmith", "Borat", "Basshunter", "Fallout Boy", "Blink 182", "Pink Floyd", "MGMT", "Justin Bieber", "The Killers", "Drake", "Jay Sean" ];
     var randomNumber = Math.floor(Math.random() * defaultSearches.length);
     $("#searchBox").val(defaultSearches[randomNumber]).select().focus();
   }
@@ -65,7 +60,7 @@ function onBodyLoad() {
   pendingDoneWorking = false;
   playerState = -1;
   hashTimeout = false;
-  loadRandomTip();
+  // loadRandomTip();
 }
 
 function onPlayerStateChange(newState) {
@@ -102,6 +97,10 @@ function goPrevVideo() {
   goVid(currentPlaylistPos - 1, currentPlaylistPage);
 }
 
+function getCurTitle() {
+  return playlistArr[currentPlaylistPage][currentPlaylistPos].title;
+}
+
 function goVid(playlistPos, playlistPage) {
   if (playlistPage != currentPlaylistPage) {
     currentPlaylistPage = playlistPage;
@@ -120,7 +119,7 @@ function doInstantSearch() {
     return;
   }
   currentSearch = searchBox.val();
-  if (searchBox.val() == "") {
+  if (searchBox.val() === "") {
     $("#playlistWrapper").slideUp("slow");
     playlistShowing = false;
     pauseVideo();
@@ -231,23 +230,14 @@ function updateSuggestedKeyword(keyword) {
 }
 
 function updateHash(hash) {
-  
   var timeDelay = 1e3;
   if (hashTimeout) {
     clearTimeout(hashTimeout);
   }
   hashTimeout = setTimeout(function() {
     window.location.replace("#" + encodeURI(hash));
-    $("#fb_share").attr("share_url", window.location);
-    /*
-    $.ajax({
-      type: "GET",
-      url: "http://static.ak.fbcdn.net/connect.php/js/FB.Share",
-      dataType: "script"
-    });*/
     $("#linkUrl").val(window.location);
     document.title = '"' + currentSuggestion.toTitleCase() + '" on shorten.tv!';
-    // prepareFBShare();
   }, timeDelay);
   
 }
@@ -256,36 +246,17 @@ function getHash() {
   return decodeURIComponent(window.location.hash.substring(1));
 }
 
-/*
-function prepareFBShare() {
-  $("#hidden").empty();
-  $("#hidden").append($('<a id="fb_share" name="fb_share" type="button_count" href="http://www.facebook.com/sharer.php">Share</a>'));
-  $("#hidden").append($('<script src="http://static.ak.fbcdn.net/connect.php/js/FB.Share" type="text/javascript"></script>'));
-}
-
-function doFBShare() {
-  $("#fb_share").click();
-}
-*/
 
 function loadRandomTip() {
   var tips = [ 
-      "",
-      "", 
-      "Every time you type a letter, a <strong>new video</strong> loads!" 
+      "Don't touch the video player! It will disrupt the summarization.", 
+      "Don't press the video player! Everything takes care of itself.", 
+      "Every time you type a letter, a new video loads!" 
   ];
   var randomNumber = Math.floor(Math.random() * tips.length);
   $("#tip").html("<u>Quick tip</u>: " + tips[randomNumber]);
 }
 
-function setVideoVolume() {
-  var volume = parseInt(document.getElementById("volumeSetting").value);
-  if (isNaN(volume) || volume < 0 || volume > 100) {
-    alert("Please enter a valid volume between 0 and 100.");
-  } else if (ytplayer) {
-    ytplayer.setVolume(volume);
-  }
-}
 
 function loadVideo(videoId) {
   if (ytplayer) {
@@ -302,8 +273,8 @@ function playVideo() {
 
 function playHotClips(videoId) {
   if (ytplayer) {
-    // ytplayer.cueVideoById(videoId);
-    ytplayer.loadVideoById(videoId);
+    ytplayer.cueVideoById(videoId);
+    //ytplayer.loadVideoById(videoId);
     var i = 0;                  
     var hotClips = [];
     var startTime = 0;
@@ -311,12 +282,23 @@ function playHotClips(videoId) {
     var delta = 0;
 
     $.post('/shorten/', { yt_id: videoId },
-        function(response) {
-            hotClips = response.hotclips;
-            //alert(hotClips);
-            hotClips = jQuery.parseJSON(hotClips);
-            replay();
-        }, 'json'
+      function(response) {
+        var strHotClips = response.hotclips;
+        var prettyHotClips = response.pretty_hotclips;
+        hotClips = jQuery.parseJSON(strHotClips);
+
+        prettyHotClips = jQuery.parseJSON(prettyHotClips);
+        var hotclipString = "";
+        for (var j=0; j<prettyHotClips.length; j++) {
+          hotclipString = hotclipString + " (" + 
+            prettyHotClips[j][0] + ", " + prettyHotClips[j][1] + ")";           
+        }
+        //'Duration: <i>' + response.duration + '</i><br>
+        $('#videoMetaData').html('Summarized Clips: <i>' + hotclipString+'</i>');
+        var title = getCurTitle();
+        $('#videoTitle').html('<strong>'+title+'</strong>');
+        replay();
+      }, 'json'
     );
 
     function sequence() {        
@@ -325,11 +307,11 @@ function playHotClips(videoId) {
         startTime = curTup[0];
         endTime = curTup[1];
         delta = (endTime - startTime) * 1000;
-        delta += 2000; // youtube api lag time
+        delta += 3000; // youtube api lag time
         // alert(startTime+" " + delta);
+
         ytplayer.seekTo(startTime);
         ytplayer.playVideo();
-
         i++;                
         if (i < hotClips.length) {      
           sequence();      
@@ -371,10 +353,6 @@ function loadAndPlayVideo(videoId, playlistPos, bypassXhrWorkingCheck) {
   var playlist = $("#playlist");
   playlist.children().removeClass("selectedThumb");
   playlist.children(":nth-child(" + (playlistPos + 1) + ")").addClass("selectedThumb");
-
-  /*
-  $("#embedUrl").val('<object width="640" height="385"><param name="movie" value="http://www.youtube.com/v/' + currentVideoId + '?fs=1&hl=en_US"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/' + currentVideoId + '?fs=1&hl=en_US" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="640" height="385"></embed></object>');
-  */
 }
 
 function setPlaybackQuality(quality) {
@@ -389,49 +367,15 @@ function pauseVideo() {
   }
 }
 
-/*
-function muteVideo() {
-  if (ytplayer) {
-    ytplayer.mute();
-  }
-}
-
-function unMuteVideo() {
-  if (ytplayer) {
-    ytplayer.unMute();
-  }
-}
-*/
-
 function clearVideo() {
   if (ytplayer) {
     ytplayer.clearVideo();
   }
 }
 
-/*
-function getEmbedCode() {
-  alert(ytplayer.getVideoEmbedCode());
-}
-*/
-
 function getVideoUrl() {
   alert(ytplayer.getVideoUrl());
 }
-
-/*
-function setVolume(newVolume) {
-  if (ytplayer) {
-    ytplayer.setVolume(newVolume);
-  }
-}
-
-function getVolume() {
-  if (ytplayer) {
-    return ytplayer.getVolume();
-  }
-}
-*/
 
 function playPause() {
   if (ytplayer) {

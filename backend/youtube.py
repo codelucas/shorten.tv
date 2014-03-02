@@ -14,7 +14,7 @@ except Exception, e:
     print 'Fails when not using as a module', str(e)
     from settings import google_username, google_password
 
-COMMENT_LIMIT = 150
+COMMENT_LIMIT = 300
 
 def comments_generator(client, video_id):
     """

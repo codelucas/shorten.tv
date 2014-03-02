@@ -14,7 +14,9 @@ app = Flask(__name__, static_url_path='/static')
 app.config.from_object('config')
 
 redis = Redis(host='localhost', port=6379, db=0)
+
 HOTCLIP_CACHE_TIME = 3600 * 24  # one day
+MIN_CLIPS = 1
 
 
 def extract_yt_data(yt_id):
@@ -45,30 +47,34 @@ def shorten():
         abort(404)
 
     prev_yt_dat = eval(redis.get(yt_id) or '{}')
-    prev_clips = prev_yt_dat.get('hotclips')
-    prev_duration = prev_yt_dat.get('duration')
+    prev_clips = prev_yt_dat.get('hotclips') or []
+    prev_duration = prev_yt_dat.get('duration') or '0'
+    prev_duration = int(prev_duration)
 
-    if prev_clips and len(prev_clips) >= 5:
-        print '=====we have succesfully cached', yt_id
+    if len(prev_clips) >= MIN_CLIPS:
         hotclips_str = json.dumps(prev_clips)
         return jsonify({'hotclips': hotclips_str,
-                        'duration': prev_duration})
+                        'duration': algorithm.convert_to_timestamp(prev_duration),
+                        'pretty_hotclips': json.dumps(algorithm.all_to_timestamp(prev_clips))
+                        })
 
     # We are using this weird mixure of json.dumps and flask.jsonify
     # because flask.jsonify does not handle lists or tuples very well,
     # but it is needed for the mime/response headers.
 
     hotclips, duration, timestamps = extract_yt_data(yt_id)
-    if len(hotclips) < 5:
-        hotclips = algorithm.random_shit(duration)
+    duration = int(duration)
+    if len(hotclips) < MIN_CLIPS:
+        hotclips = hotclips + algorithm.random_shit(duration)
 
     yt_dat = {'hotclips': hotclips, 'duration': duration}
     redis.setex(yt_id, yt_dat, HOTCLIP_CACHE_TIME)
 
     hotclips_str = json.dumps(hotclips)
     return jsonify({'hotclips': hotclips_str,
-                    'duration': duration})
-
+                    'duration': algorithm.convert_to_timestamp(prev_duration),
+                    'pretty_hotclips': json.dumps(algorithm.all_to_timestamp(prev_clips))
+                    })
 
 app.debug = app.config['DEBUG']
 

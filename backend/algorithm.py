@@ -8,6 +8,14 @@ __copyright__ = 'Copyright 2014, Lucas Ou-Yang'
 import time
 import random
 
+
+def all_to_timestamp(second_tuples):
+    """
+    Converts a list of 2-tuples of seconds into a list of 2-tuples of timestamps.
+    """
+    return [(convert_to_timestamp(tup[0]), convert_to_timestamp(tup[1]))
+            for tup in second_tuples]
+
 def convert_to_timestamp(seconds):
     """
     Converts an integer into a string 'HH:MM:SS'.
@@ -16,8 +24,14 @@ def convert_to_timestamp(seconds):
     back into the 24hr mark, we return 00:00:00.
     """
     if seconds < 0:
-        return '00:00:00'
-    return time.strftime('%H:%M:%S', time.gmtime(seconds))
+        return '0:00'
+
+    tt = time.strftime('%H:%M:%S', time.gmtime(seconds))
+    if tt[:2] == '00':
+        tt = tt[3:]  # slice off leading ':' also
+    if tt[:1] == '0':
+        tt = tt[1:]
+    return tt
 
 def convert_to_seconds(timestamp):
     """
@@ -72,10 +86,10 @@ def hotness_delta(video_duration):
     if video_duration < 10:
         return 2
     elif video_duration < 120:
-        return 4
+        return 8
     elif video_duration < 300:
-        return 7
-    return 10
+        return 12
+    return 15
 
 def get_hotspots(timestamps, video_duration):
     """
@@ -128,7 +142,7 @@ def random_shit(duration):
     clips near the beginning, middle and end.
     """
     rands = set()
-    for i in xrange(5):
+    for i in xrange(3):
         rands.add(random.randint(0, duration))
 
     sorted_rands = sorted(list(rands))

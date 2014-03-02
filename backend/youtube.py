@@ -14,6 +14,8 @@ except Exception, e:
     print 'Fails when not using as a module', str(e)
     from settings import google_username, google_password
 
+COMMENT_LIMIT = 150
+
 def comments_generator(client, video_id):
     """
     Directly uses google youtube api to build a generator of comments
@@ -62,7 +64,6 @@ def get_yt_comments(client, video_id):
     Also, the standard google api restriction is 1000 most recent comments
     per video anyways. We auth with a custom google application key.
     """
-    API_LIMIT = 550
     # import codecs
     # f = codecs.open('comments.txt', 'w', 'utf8')
     count = 1
@@ -76,7 +77,7 @@ def get_yt_comments(client, video_id):
         ret_comments.append(text)
 
         count += 1
-        if count == API_LIMIT:
+        if count == COMMENT_LIMIT:
             break
     return ret_comments
 

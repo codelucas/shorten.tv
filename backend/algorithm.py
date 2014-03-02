@@ -61,12 +61,12 @@ def hotness_delta(video_duration):
     if not isinstance(video_duration, int):
         video_duration = int(video_duration)
     if video_duration < 10:
-        return 1
+        return 5
     elif video_duration < 120:
-        return 3
+        return 14
     elif video_duration < 300:
-        return 7
-    return 15
+        return 25
+    return 30
 
 def get_hotspots(timestamps, video_duration):
     """
@@ -130,9 +130,10 @@ def expand_hotspots(hotspots, video_duration, max_subclips=10):
     expanded_spots = []
     for time, hotness in hotspots:
         seconds = convert_to_seconds(time)
-        expanded_spots.append( (seconds-delta, seconds+delta) )
+        expanded_spots.append((max(0, seconds-delta),
+                               min(seconds+delta, int(video_duration)-1)))
     if len(expanded_spots) > max_subclips:
-        pass # TODO
+        pass  # TODO
     return expanded_spots
 
 def get_clips(timestamps, video_duration):

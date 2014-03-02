@@ -270,8 +270,8 @@ function doFBShare() {
 
 function loadRandomTip() {
   var tips = [ 
-      "Use the <strong>arrow keys</strong> on your keyboard to skip to the next video!",
-      "Press <strong>Enter</strong> to pause the video.", 
+      "",
+      "", 
       "Every time you type a letter, a <strong>new video</strong> loads!" 
   ];
   var randomNumber = Math.floor(Math.random() * tips.length);
@@ -309,6 +309,15 @@ function playHotClips(videoId) {
     var endTime = 0;
     var delta = 0;
 
+    $.post('/shorten/', { yt_id: videoId },
+        function(response) {
+            hotClips = response.hotclips;
+            //alert(hotClips);
+            hotClips = jQuery.parseJSON(hotClips);
+            replay();
+        }, 'json'
+    );
+
     function sequence() {        
       setTimeout(function() { 
         var curTup = hotClips[i];
@@ -336,7 +345,7 @@ function playHotClips(videoId) {
       sequence();
     }
 
-    replay();
+    //replay();
   }
 }
 

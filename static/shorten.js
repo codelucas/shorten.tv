@@ -356,23 +356,28 @@ function playHotClips(videoId) {
           goNextVideo();
           return;
         }
+
         highlightTime(i);
         var curTup = hotClips[i];
         startTime = curTup[0];
         endTime = curTup[1];
         delta = (endTime - startTime) * 1000;
         delta += 3000;  // youtube api lag time
+        
+        setTimeout(function() {
+          seekTo(startTime);
+        }, 3000);
 
-        // alert('we are currently seeking to ' + startTime + ' clips: '+ hotClips);
-        seekTo(startTime);
-        playVideo();
+        // playVideo();
+        
         i++;                
         if (i == hotClips.length) { 
           setTimeout(function() {
             i = 0;
             goNextVideo();
           }, delta);
-        } else if (i < hotClips.length) {      
+        } 
+        else if (i < hotClips.length) {      
           sequence();      
         }
        }, delta);

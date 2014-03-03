@@ -1,8 +1,7 @@
 // Code for shorten.tv. Most of the youtube related code, like
 // autoplaying videos and autcomplete was taken from Feross's 
 // project: youtubeinstant.com, check it out!
-//
-// Lucas Ou-Yang -- http://codelucas.com
+// http://youtubeinstant.com
 
 google.load("swfobject", "2.1");
 google.load("jquery", "1.4.2");

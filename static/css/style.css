@@ -47,6 +47,21 @@
   padding: 1px;
 }
 
+.leftBottom {
+  position: absolute;
+  bottom: 5px;
+  left: 10px;
+  font-size: 11px;
+}
+
+
+.rightBottom {
+  position: absolute;
+  bottom: 5px;
+  right: 10px;
+  font-size: 11px;
+}
+
 .statusLoading {
   background: #FFF url(/imgs/loading.gif) no-repeat 310px 50%;
 }

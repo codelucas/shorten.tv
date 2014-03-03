@@ -2,6 +2,9 @@
 settings.py
 config.py
 
+*.min.js
+*.min.css
+
 # C extensions
 *.so
 

@@ -47,4 +47,5 @@ Modify the contents of `server/*` and configure the main `nginx` and
 details to come soon)!
 
 Written by Lucas Ou-Yang -- http://codelucas.com
+
 If you have any questions, don't hesitate to [contact me](http://codelucas.com).

@@ -361,7 +361,7 @@ function playHotClips(videoId) {
         startTime = curTup[0];
         endTime = curTup[1];
         delta = (endTime - startTime) * 1000;
-        delta += 3000;  // youtube api lag time
+        // delta += 3000;  // youtube api lag time
         
         setTimeout(function() {
           seekTo(startTime);

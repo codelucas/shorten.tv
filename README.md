@@ -2,7 +2,11 @@ Shorten.tv - Video summarization
 ================================
 
 Official source code for www.shorten.tv, the youtube video summarizer, built with 
-python, flask, ffmpeg, moviepy, and the google sdk.
+python, [flask](https://github.com/mitsuhiko/flask), [ffmpeg](http://www.ffmpeg.org/), 
+[moviepy](https://github.com/Zulko/moviepy), and the google sdk.
+
+The official video summarization dev-library will be open sourced soon at
+[this location](https://github.com/codelucas/vsummarize).
 
 **Architecture**:
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 # -*- coding: utf-8 -*-
 """
 Written by:
@@ -15,7 +15,7 @@ app.config.from_object('config')
 
 redis = Redis(host='localhost', port=6379, db=0)
 
-HOTCLIP_CACHE_TIME = 3600 * 24  # one day
+HOTCLIP_CACHE_TIME = 3600 * 24 * 40  # 40 days
 MIN_CLIPS = 1
 
 

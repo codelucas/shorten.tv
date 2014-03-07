@@ -85,8 +85,8 @@ class GeneralUnitTestCases(unittest.TestCase):
     def convert_timestamps_test(self):
         t1 = 72
         t2 = -5
-        assert algorithm.convert_to_timestamp(t1) == '00:01:12'
-        assert algorithm.convert_to_timestamp(t2) == '00:00:00'
+        assert algorithm.convert_to_timestamp(t1) == '1:12'
+        assert algorithm.convert_to_timestamp(t2) == '0:00'
 
     @print_test
     def expand_hotspot_test(self):

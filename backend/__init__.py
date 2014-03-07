@@ -19,18 +19,54 @@ HOTCLIP_CACHE_TIME = 3600 * 24 * 40  # 40 days
 MIN_CLIPS = 1
 
 
-def extract_yt_data(yt_id):
+def check_cache(yt_id):
+    """
+    Check our redis cache to see if the yt_id has already
+    been extracted and stored
+    """
+    prev_yt_dat = eval(redis.get(yt_id) or '{}')
+    prev_clips = prev_yt_dat.get('hotclips') or []
+    prev_duration = prev_yt_dat.get('duration') or '0'
+    prev_duration = int(prev_duration)
+
+    was_cached = (len(prev_clips) >= MIN_CLIPS)
+    if was_cached:
+        return prev_clips, prev_duration
+    return None, None
+
+
+def check_youtube(yt_id):
+    """
+    Manually extract data from youtube
+    """
+    yt_client = youtube.get_client()
+    timestamps = youtube.get_timestamp_list(client=yt_client, video_id=yt_id)
+    duration = youtube.get_duration(yt_client, video_id=yt_id)
+    duration = int(duration)
+
+    hotclips = algorithm.get_clips(timestamps, duration)
+
+    if len(hotclips) < MIN_CLIPS:
+        hotclips = hotclips + algorithm.random_shit(duration)
+    hotclips = algorithm.sort_seconds(hotclips)
+
+    return hotclips, duration  # , timestamps
+
+
+def extract(yt_id):
     """
     Method to extract video data from youtube, such as
     timestamps, duration, and our computed hotspot clips.
     """
-    yt_client = youtube.get_client()
-    timestamps = youtube.get_timestamp_list(client=yt_client, video_id=yt_id)
-    duration_seconds = youtube.get_duration(yt_client, video_id=yt_id)
+    clips, duration = check_cache(yt_id)
+    if not clips:
+        clips, duration = check_youtube(yt_id)
+        # cache this data for later
+        yt_dat = {'hotclips': clips, 'duration': duration}
+        redis.setex(yt_id, yt_dat, HOTCLIP_CACHE_TIME)
 
-    hotclips = algorithm.get_clips(timestamps, duration_seconds)
+    return clips, duration
 
-    return hotclips, duration_seconds, timestamps
 
 @app.route('/shorten/', methods=['POST'])
 def shorten():
@@ -46,37 +82,19 @@ def shorten():
     if not yt_id:
         abort(404)
 
-    prev_yt_dat = eval(redis.get(yt_id) or '{}')
-    prev_clips = prev_yt_dat.get('hotclips') or []
-    prev_duration = prev_yt_dat.get('duration') or '0'
-    prev_duration = int(prev_duration)
-
-    prev_clips = algorithm.sort_seconds(prev_clips)
-
-    if len(prev_clips) >= MIN_CLIPS:
-        hotclips_str = json.dumps(prev_clips)
-        return jsonify({'hotclips': hotclips_str,
-                        'duration': algorithm.convert_to_timestamp(prev_duration),
-                        'pretty_hotclips': json.dumps(algorithm.all_to_timestamp(prev_clips))
-                        })
-
     # We are using this weird mixure of json.dumps and flask.jsonify
     # because flask.jsonify does not handle lists or tuples very well,
     # but it is needed for the mime/response headers.
 
-    hotclips, duration, timestamps = extract_yt_data(yt_id)
-    duration = int(duration)
-    if len(hotclips) < MIN_CLIPS:
-        hotclips = hotclips + algorithm.random_shit(duration)
-    hotclips = algorithm.sort_seconds(hotclips)
-
-    yt_dat = {'hotclips': hotclips, 'duration': duration}
-    redis.setex(yt_id, yt_dat, HOTCLIP_CACHE_TIME)
+    hotclips, duration = extract(yt_id)
 
     hotclips_str = json.dumps(hotclips)
+    pretty_hotclips = json.dumps(algorithm.all_to_timestamp(hotclips))
+    duration_str = algorithm.convert_to_timestamp(duration)
+
     return jsonify({'hotclips': hotclips_str,
-                    'duration': algorithm.convert_to_timestamp(prev_duration),
-                    'pretty_hotclips': json.dumps(algorithm.all_to_timestamp(hotclips))
+                    'duration': duration_str,
+                    'pretty_hotclips': pretty_hotclips
                     })
 
 app.debug = app.config['DEBUG']

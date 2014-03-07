@@ -16,6 +16,7 @@ except Exception, e:
 
 COMMENT_LIMIT = 300
 
+
 def comments_generator(client, video_id):
     """
     Directly uses google youtube api to build a generator of comments
@@ -30,28 +31,32 @@ def comments_generator(client, video_id):
 
     while comment_feed is not None:
         for comment in comment_feed.entry:
-             yield comment
+            yield comment
 
         next_link = comment_feed.GetNextLink()
 
         if next_link is None:
-             comment_feed = None
+            comment_feed = None
         else:
             try:
-                comment_feed = client.GetYouTubeVideoCommentFeed(next_link.href)
+                comment_feed = client.\
+                    GetYouTubeVideoCommentFeed(next_link.href)
             except Exception, e:
                 print 'Custom exception', str(e)
                 comment_feed = None
                 break
+
 
 def get_duration(client, video_id):
     """
     Returns in string format the duration of this video in seconds.
     """
     video = client.GetYouTubeVideoEntry(video_id=video_id)
-    if video and video.media and video.media.duration and video.media.duration.seconds:
+    if video and video.media and video.media.duration and \
+            video.media.duration.seconds:
         return video.media.duration.seconds
     return ''
+
 
 def get_yt_comments(client, video_id):
     """
@@ -81,6 +86,7 @@ def get_yt_comments(client, video_id):
             break
     return ret_comments
 
+
 def trim_str_num(s):
     """
     Takes a string in the form of a yt timestamp, \d\d:\d\d, and
@@ -88,6 +94,7 @@ def trim_str_num(s):
     """
     timestamp_arr = [c for c in s if c.isdigit() or c == ':']
     return ''.join(timestamp_arr)
+
 
 def get_timestamp_list(client, video_id):
     """
@@ -103,6 +110,7 @@ def get_timestamp_list(client, video_id):
         clean_times = [trim_str_num(t) for t in cur_times]
         times += clean_times  # More pythonic than .extends(..)
     return times
+
 
 def get_client():
     """

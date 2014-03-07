@@ -11,10 +11,12 @@ import random
 
 def all_to_timestamp(second_tuples):
     """
-    Converts a list of 2-tuples of seconds into a list of 2-tuples of timestamps.
+    Converts a list of 2-tuples of seconds into a list of
+    2-tuples of timestamps.
     """
     return [(convert_to_timestamp(tup[0]), convert_to_timestamp(tup[1]))
             for tup in second_tuples]
+
 
 def convert_to_timestamp(seconds):
     """
@@ -32,6 +34,7 @@ def convert_to_timestamp(seconds):
     if tt[:1] == '0':
         tt = tt[1:]
     return tt
+
 
 def convert_to_seconds(timestamp):
     """
@@ -55,11 +58,13 @@ def convert_to_seconds(timestamp):
         return (hours * 3600) + (minutes * 60) + seconds
     raise Exception('Funky shit happening w/ timestamps')
 
+
 def unique_timestamps(timestamps):
     """
     Remove duplicate timestamps.
     """
     return list(set(timestamps))
+
 
 def sort_timestamps(timestamps):
     """
@@ -67,11 +72,13 @@ def sort_timestamps(timestamps):
     """
     return sorted(timestamps, key=lambda num: convert_to_seconds(num))
 
+
 def sort_seconds(timestamps):
     """
     Sorts a list of 2-tuples by their first element
     """
     return sorted(timestamps, key=lambda tup: tup[0])
+
 
 def hotness_delta(video_duration):
     """
@@ -97,6 +104,7 @@ def hotness_delta(video_duration):
         return 12
     return 15
 
+
 def get_hotspots(timestamps, video_duration):
     """
     We will now compute hotspot points along with their scores;
@@ -113,7 +121,7 @@ def get_hotspots(timestamps, video_duration):
     being the "hit counter" hotness of that time.
     """
     sorted_times = sort_timestamps(timestamps)
-    hit_counter = {time:1 for time in sorted_times}
+    hit_counter = {time: 1 for time in sorted_times}
     delta = hotness_delta(video_duration)
     killed = {}
     for i, time in enumerate(sorted_times):
@@ -132,9 +140,10 @@ def get_hotspots(timestamps, video_duration):
             else:
                 pass
 
-    hotspots = [ (time, hit_counter[time]) for time in sorted_times
-                                    if time not in killed ]
+    hotspots = [(time, hit_counter[time]) for time in sorted_times
+                if time not in killed]
     return hotspots
+
 
 def random_shit(duration):
     """
@@ -156,6 +165,7 @@ def random_shit(duration):
 
     hotspots = expand_hotspots(faked_hotspots, duration, 5)
     return hotspots
+
 
 def expand_hotspots(hotspots, video_duration, max_subclips=10):
     """
@@ -188,6 +198,7 @@ def expand_hotspots(hotspots, video_duration, max_subclips=10):
         pass  # TODO
     return expanded_spots
 
+
 def get_clips(timestamps, video_duration):
     """
     Inputs a list of comment timestamps along with total
@@ -200,4 +211,3 @@ def get_clips(timestamps, video_duration):
     hotspots = get_hotspots(sorted_times, video_duration)
     hotclips = expand_hotspots(hotspots, video_duration)
     return hotclips
-

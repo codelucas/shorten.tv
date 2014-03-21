@@ -1,9 +1,9 @@
 #!/usr/bin/env python2.7
 # -*- coding: utf-8 -*-
 __title__ = 'vSummarize'
-__author__ = 'Lucas Ou-Yang'
+__author__ = 'Lucas Ou'
 __license__ = 'MIT'
-__copyright__ = 'Copyright 2014, Lucas Ou-Yang'
+__copyright__ = 'Copyright 2014, Lucas Ou'
 
 import time
 import random

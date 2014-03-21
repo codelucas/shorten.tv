@@ -4,9 +4,9 @@
 All unit tests for vSummarize should be contained here.
 """
 __title__ = 'vSummarize'
-__author__ = 'Lucas Ou-Yang'
+__author__ = 'Lucas Ou'
 __license__ = 'MIT'
-__copyright__ = 'Copyright 2014, Lucas Ou-Yang'
+__copyright__ = 'Copyright 2014, Lucas Ou'
 
 import sys
 import os

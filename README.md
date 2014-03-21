@@ -50,6 +50,6 @@ Modify the contents of `server/*` and configure the main `nginx` and
 `supervisor` instances to serve up our application. (More descriptive
 details to come soon)!
 
-Written by Lucas Ou-Yang -- http://codelucas.com
+Written by Lucas Ou -- http://lucasou.com
 
-If you have any questions, don't hesitate to [contact me](http://codelucas.com).
+If you have any questions, don't hesitate to [contact me](http://lucasou.com).

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Written by:
-Lucas Ou -- http://codelucas.com
+Lucas Ou -- http://lucasou.com
 """
 from flask import Flask, request, jsonify, abort
 import json

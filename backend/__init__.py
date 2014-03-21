@@ -63,7 +63,10 @@ def extract(yt_id):
         clips, duration = check_youtube(yt_id)
         # cache this data for later
         yt_dat = {'hotclips': clips, 'duration': duration}
-        redis.setex(yt_id, yt_dat, HOTCLIP_CACHE_TIME)
+        redis.set(yt_id, yt_dat)
+        # let's not have the clips expire for now since they take so
+        # long to compute
+        # redis.setex(yt_id, yt_dat, HOTCLIP_CACHE_TIME)
 
     return clips, duration
 

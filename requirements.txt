@@ -1,6 +1,6 @@
 Flask==0.10.1
 Werkzeug==0.9.4
 gunicorn==18.0
-requests==2.2.1
+requests==2.20.0
 gdata==2.0.18
 redis
